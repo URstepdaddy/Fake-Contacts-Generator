@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            color: #eee;
+            padding: 20px;
+        }
+
+        .container { max-width: 960px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #e94560;
+            text-shadow: 0 0 20px rgba(233,69,96,0.4);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 28px;
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 18px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #e94560;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        @media(max-width:600px){ .controls{ grid-template-columns:1fr; } }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: #aaa;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus { border-color: #e94560; }
+        select option { background: #1a1a2e; }
+
+        .field-toggles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toggle-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: all 0.25s;
+            user-select: none;
+            font-size: 0.88rem;
+            color: #aaa;
+        }
+
+        .toggle-pill:hover {
+            border-color: rgba(233,69,96,0.4);
+            background: rgba(233,69,96,0.08);
+            color: #fff;
+        }
+
+        .toggle-pill.active {
+            border-color: #e94560;
+            background: rgba(233,69,96,0.18);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .toggle-pill.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .toggle-pill.locked:hover {
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: #aaa;
+        }
+
+        .checkmark {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+
+        .toggle-pill.active .checkmark {
+            background: #e94560;
+            border-color: #e94560;
+            color: white;
+        }
+
+        .preset-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .preset-btn {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: transparent;
+            color: #aaa;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus { border-color: #e94560; }
+        .search-box::placeholder { color: #555; }
+
+        .select-all-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .small-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: #aaa;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .small-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.04);
+            padding: 7px 13px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            font-size: 0.85rem;
+            color: #bbb;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(233,69,96,0.1);
+            border-color: rgba(233,69,96,0.3);
+            color: #fff;
+        }
+
+        .checkbox-item input { accent-color: #e94560; width:14px; height:14px; }
+
+        .checkbox-item.selected {
+            background: rgba(233,69,96,0.15);
+            border-color: #e94560;
+            color: #fff;
+        }
+
+        .btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg,#e94560,#c23152);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233,69,96,0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.07);
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .btn-secondary:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        .btn-success {
+            background: linear-gradient(135deg,#2ecc71,#27ae60);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46,204,113,0.35);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg,#3498db,#2980b9);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52,152,219,0.35);
+        }
+
+        .export-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+        .export-buttons .btn { flex: 1; min-width: 140px; }
+
+        .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+
+        .stat-box {
+            background: rgba(233,69,96,0.08);
+            border: 1px solid rgba(233,69,96,0.25);
+            border-radius: 12px;
+            padding: 14px 22px;
+            text-align: center;
+            flex: 1;
+            min-width: 110px;
+        }
+
+        .stat-number { font-size: 1.8rem; font-weight: 700; color: #e94560; }
+        .stat-label { font-size: 0.75rem; color: #888; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        thead { background: rgba(233,69,96,0.15); }
+
+        th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 700;
+            color: #e94560;
+            white-space: nowrap;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover { background: rgba(255,255,255,0.04); }
+        td { padding: 11px 14px; color: #ddd; white-space: nowrap; }
+
+        .phone-number {
+            font-family: 'Courier New', monospace;
+            color: #2ecc71;
+            letter-spacing: 0.5px;
+        }
+
+        .country-badge {
+            background: rgba(255,255,255,0.07);
+            border-radius: 5px;
+            padding: 2px 8px;
+            font-size: 0.78rem;
+            color: #aaa;
+        }
+
+        .loading { text-align: center; padding: 40px; color: #888; display: none; }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state { text-align: center; padding: 50px; color: #555; }
+        .empty-state .icon { font-size: 3.5rem; margin-bottom: 12px; }
+
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: #2ecc71;
+            color: white;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.35s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        .region-header {
+            width: 100%;
+            color: #555;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 10px 0 4px;
+            padding-left: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📇 Contact Generator</h1>
+    <p class="subtitle">Generate realistic random contacts — pick your countries, pick your fields</p>
+
+    <!-- SETTINGS -->
+    <div class="card">
+        <div class="section-title">⚙️ Settings</div>
+        <div class="controls">
+            <div>
+                <label for="contactCount">Number of Contacts</label>
+                <input type="number" id="contactCount" value="10" min="1" max="10000">
+            </div>
+            <div>
+                <label for="formatSelect">Phone Format</label>
+                <select id="formatSelect">
+                    <option value="international">+XX International</option>
+                    <option value="local">Local (no dial code)</option>
+                </select>
+            </div>
+            <div style="padding-top:6px;">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" style="width:100%;" onclick="generateContacts()">⚡ Generate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIELD TOGGLES -->
+    <div class="card">
+        <div class="section-title">🎛️ Fields to Include</div>
+        <div class="preset-row">
+            <button class="preset-btn" onclick="applyPreset('minimal')">📱 Minimal</button>
+            <button class="preset-btn" onclick="applyPreset('standard')">👤 Standard</button>
+            <button class="preset-btn" onclick="applyPreset('full')">📋 Full</button>
+        </div>
+        <div class="field-toggles" id="fieldToggles"></div>
+    </div>
+
+    <!-- COUNTRIES -->
+    <div class="card">
+        <div class="section-title">🌍 Countries</div>
+        <input class="search-box" type="text" id="countrySearch" placeholder="🔍 Search countries…" oninput="filterCountries()">
+        <div class="select-all-row">
+            <button class="small-btn" onclick="selectAllCountries()">Select All</button>
+            <button class="small-btn" onclick="deselectAllCountries()">Deselect All</button>
+            <span style="color:#555;font-size:0.82rem;margin-left:6px;" id="selectedCount">0 selected</span>
+        </div>
+        <div class="checkbox-group" id="countryList"></div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="card" id="exportCard" style="display:none;">
+        <div class="section-title">💾 Export</div>
+        <div class="export-buttons">
+            <button class="btn btn-success"   onclick="exportCSV()">📄 CSV</button>
+            <button class="btn btn-info"      onclick="exportVCF()">📱 VCF</button>
+            <button class="btn btn-secondary" onclick="clearContacts()">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Generating contacts…</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats" id="statsArea" style="display:none;">
+        <div class="stat-box">
+            <div class="stat-number" id="statTotal">0</div>
+            <div class="stat-label">Contacts</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" id="statCountries">0</div>
+            <div class="stat-label">Countries</div>
+        </div>
+        <div class="stat-box" id="statMaleBox">
+            <div class="stat-number" id="statMale">0</div>
+            <div class="stat-label">Male</div>
+        </div>
+        <div class="stat-box" id="statFemaleBox">
+            <div class="stat-number" id="statFemale">0</div>
+            <div class="stat-label">Female</div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card" id="resultsCard" style="display:none;">
+        <div class="section-title">📋 Generated Contacts</div>
+        <div class="table-wrapper">
+            <table>
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+        <div class="icon">📱</div>
+        <p>Pick countries, choose fields, then hit <strong style="color:#e94560;">Generate</strong></p>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ═══════════════════════════════════════════════════════════════
+// FIELD DEFINITIONS
+// ═══════════════════════════════════════════════════════════════
+const FIELDS = [
+    { id: "firstName",   label: "First Name",   icon: "🔤", locked: true,  default: true  },
+    { id: "lastName",    label: "Last Name",    icon: "🔤", locked: false, default: true  },
+    { id: "phone",       label: "Phone",        icon: "📞", locked: true,  default: true  },
+    { id: "email",       label: "Email",        icon: "📧", locked: false, default: false },
+    { id: "gender",      label: "Gender",       icon: "⚧",  locked: false, default: false },
+    { id: "country",     label: "Country",      icon: "🌍", locked: false, default: true  },
+    { id: "flag",        label: "Flag",         icon: "🏳",  locked: false, default: true  },
+    { id: "dialCode",    label: "Dial Code",    icon: "🔢", locked: false, default: false },
+    { id: "countryCode", label: "Country Code", icon: "🆔", locked: false, default: false },
+];
+
+const PRESETS = {
+    minimal:  ["firstName", "phone"],
+    standard: ["firstName", "lastName", "phone", "country", "flag"],
+    full:     ["firstName", "lastName", "phone", "email", "gender", "country", "flag", "dialCode", "countryCode"],
+};
+
+// Start with defaults + locked
+let activeFields = new Set(
+    FIELDS.filter(f => f.default || f.locked).map(f => f.id)
+);
+
+// ═══════════════════════════════════════════════════════════════
+// NAME POOLS
+// ═══════════════════════════════════════════════════════════════
+const ARABIC_MALE = [
+    "Mohamed","Ahmed","Youssef","Omar","Ali","Ibrahim","Khalid","Hassan","Hussein","Tariq",
+    "Bilal","Hamza","Amine","Karim","Nabil","Samir","Walid","Rachid","Mehdi","Hicham",
+    "Younes","Sami","Jamal","Adel","Faisal","Mansour","Ziad","Ramzi","Rayan","Sofiane",
+    "Ayman","Wael","Maher","Tarek","Badr","Yasser","Nasr","Mourad","Saber","Lotfi",
+    "Mondher","Fares","Oussama","Aniss","Ghazi","Ridha","Hatem","Kamel","Taha","Bassem"
+];
+const ARABIC_FEMALE = [
+    "Fatima","Aisha","Maryam","Sara","Nour","Rania","Hana","Dina","Ines","Amira",
+    "Salma","Lina","Yasmine","Rim","Nesrine","Asma","Samira","Khadija","Hafsa","Zahra",
+    "Meriem","Sana","Reem","Hiba","Doha","Nadia","Sihem","Leila","Mouna","Houda",
+    "Wafa","Ghada","Dalila","Oumaima","Chaima","Lobna","Soumaya","Imane","Latifa","Naima",
+    "Abir","Najwa","Manal","Basma","Zeineb","Marwa","Safia","Radhia","Widad","Manel"
+];
+const ARABIC_LAST_MAGHREB = [
+    "Ben Ali","Ben Salem","Ben Youssef","Belhaj","Belmoktar","Boukhari","Chouaibi","Dridi",
+    "El Amri","El Fasi","El Idrissi","Farhat","Gharbi","Hamdi","Hamrouni","Jebali","Karray",
+    "Khelifi","Laabidi","Lagha","Mansouri","Marzouki","Meddeb","Mekouar","Mkacher","Mnaouer",
+    "Nasr","Ouali","Rahmouni","Saidi","Sassi","Slimani","Tlili","Trabelsi","Zayani","Zouaghi",
+    "Amrani","Benali","Benbrahim","Bencheikh","Bennacer","Bouhaddou","Boumediene",
+    "Chaabane","Chabane","Dahmani","Hadj","Lahlou","Meziane","Naciri","Ouahrani","Rahmani",
+    "Seddiki","Touati","Zerrouk"
+];
+const ARABIC_LAST_MASHREQ = [
+    "Hassan","Hussein","Ibrahim","Ali","Mohamed","Ahmed","Mahmoud","Sayed","Khalil","Mansour",
+    "Ramadan","Salem","Mostafa","Omar","Farouk","Amin","Zaki","Nasr","Fathy","Morsi",
+    "Soliman","Barakat","Nasser","Kamel","Bakr","Hamid","Sharif","Abdallah","Gamal","Wahba",
+    "Al-Rashid","Al-Otaibi","Al-Qahtani","Al-Ghamdi","Al-Harbi","Al-Zahrani",
+    "Al-Mutairi","Al-Sayed","Al-Fahad","Al-Khalid","Al-Hamdan"
+];
+
+// ═══════════════════════════════════════════════════════════════
+// COUNTRIES
+// ═══════════════════════════════════════════════════════════════
+const COUNTRIES = [
+
+    // ── NORTH AFRICA ──
+    {
+        name:"Tunisia", code:"TN", dial:"+216", flag:"🇹🇳", region:"North Africa",
+        maleNames: ARABIC_MALE, femaleNames: ARABIC_FEMALE, lastNames: ARABIC_LAST_MAGHREB,
+        phoneFormat: () => `+216 ${ri(20,99)} ${ri(100,999)} ${ri(100,999)}`
+    },
+    {
+        name:"Morocco", code:"MA", dial:"+212", flag:"🇲🇦", region:"North Africa",
+        maleNames: ARABIC_MALE, femaleNames: ARABIC_FEMALE, lastNames: ARABIC_LAST_MAGHREB,
+        phoneFormat: () => `+212 6${ri(10,99)}-${ri(100,999)}-${ri(100,999)}`
+    },
+    {
+        name:"Algeria", code:"DZ", dial:"+213", flag:"🇩🇿", region:"North Africa",
+        maleNames: ARABIC_MALE, femaleNames: ARABIC_FEMALE, lastNames: ARABIC_LAST_MAGHREB,
+        phoneFormat: () => `+213 5${ri(50,79)} ${ri(100,999)} ${ri(100,999)}`
+    },
+    {
+        name:"Libya", code:"LY", dial:"+218", flag:"🇱🇾", region:"North Africa",
+        maleNames: ARABIC_MALE, femaleNames: ARABIC_FEMALE, lastNames: ARABIC_LAST_MASHREQ,
+        phoneFormat: () => `+218 9${ri(1,2)}-${ri(1000000,9999999)}`
+    },
+    {
+        name:"Egypt", code:"EG", dial:"+20", flag:"🇪🇬", region:"North Africa",
+        maleNames: ARABIC_MALE, femaleNames: ARABIC_FEMALE, lastNames: ARABIC_LAST_MASHREQ,
+        phoneFormat: () => { const p=pick(["010","011","012","015"]); return `+20 ${p.slice(1)} ${ri(10000000,99999999)}`; }
+    },
+    {
+        name:"Mauritania", code:"MR", dial:"+222", flag:"🇲🇷", region:"North Africa",
+        maleNames: ARABIC_MALE, femaleNames: ARABIC_FEMALE, lastNames: ARABIC_LAST_MAGHREB,
+        phoneFormat: () => `+222 ${ri(20,49)} ${ri(10,99)} ${ri(10,99)} ${ri(10,99)}`
+    },
+
+    // ── EUROPE ──
+    {
+        name:"France", code:"FR", dial:"+33", flag:"🇫🇷", region:"Europe",
+        maleNames:["Gabriel","Raphaël","Léo","Louis","Lucas","Adam","Maël","Ethan","Mathis","Noah","Nathan","Tom","Hugo","Liam","Théo","Arthur","Axel","Enzo","Mathieu","Paul","Pierre","Jules","Baptiste","Antoine","Clément","Nicolas","Alexandre","Romain","Thomas","Julien","Quentin","Maxime","Florian","Guillaume","Valentin","Adrien","Alexis","Tristan","Yann","Loïc"],
+        femaleNames:["Emma","Jade","Louise","Alice","Chloé","Lina","Léa","Manon","Inès","Camille","Zoé","Sarah","Eva","Lucie","Clara","Océane","Anaïs","Elisa","Lola","Charlotte","Julie","Mathilde","Margot","Marion","Clémence","Pauline","Laura","Amélie","Aurélie","Marine","Justine","Noémie","Maéva","Fiona","Romane","Ambre","Lilou","Enora","Céline","Chloé"],
+        lastNames:["Martin","Bernard","Thomas","Petit","Robert","Richard","Durand","Dubois","Moreau","Laurent","Simon","Michel","Lefebvre","Leroy","Roux","David","Bertrand","Morel","Fournier","Girard","Bonnet","Dupont","Lambert","Fontaine","Rousseau","Vincent","Faure","André","Mercier","Blanc","Guérin","Boyer","Garnier","Chevalier","François","Legrand","Gauthier","Garcia","Perrin","Clement"],
+        phoneFormat: () => { const n=`06${ri(10000000,99999999)}`; return `+33 ${n[0]} ${n.slice(1,3)} ${n.slice(3,5)} ${n.slice(5,7)} ${n.slice(7,9)}`; }
+    },
+    {
+        name:"Germany", code:"DE", dial:"+49", flag:"🇩🇪", region:"Europe",
+        maleNames:["Noah","Leon","Finn","Luca","Jonas","Luis","Felix","Elias","Paul","Ben","Maximilian","Julian","Lukas","Tim","Moritz","Niklas","Jan","Tobias","Florian","Simon","Alexander","Fabian","Philipp","Christian","Stefan","Andreas","Michael","Daniel","Thomas","Markus","Johannes","Sebastian","David","Kevin","Patrick","Dominik","Björn","Sven","Matthias","Klaus"],
+        femaleNames:["Emma","Mia","Hannah","Sophia","Anna","Lea","Lena","Marie","Emilia","Leonie","Lara","Laura","Alina","Lisa","Amelie","Luisa","Nele","Julia","Sarah","Katharina","Christina","Sandra","Nicole","Claudia","Stefanie","Petra","Monika","Sabine","Andrea","Anja","Jana","Franziska","Melanie","Eva","Nadine","Iris","Birgit","Heike","Martina","Antje"],
+        lastNames:["Müller","Schmidt","Schneider","Fischer","Weber","Meyer","Wagner","Becker","Schulz","Hoffmann","Schäfer","Koch","Bauer","Richter","Klein","Wolf","Schröder","Neumann","Schwarz","Zimmermann","Braun","Krüger","Hofmann","Hartmann","Lange","Schmitt","Werner","Schmitz","Krause","Meier","Lehmann","Schmid","Schulze","Maier","Köhler","Herrmann","König","Walter","Mayer","Huber"],
+        phoneFormat: () => `+49 1${ri(50,79)} ${ri(1000000,9999999)}`
+    },
+    {
+        name:"United Kingdom", code:"GB", dial:"+44", flag:"🇬🇧", region:"Europe",
+        maleNames:["Oliver","George","Harry","Jack","Jacob","Noah","Charlie","Thomas","Oscar","William","James","Leo","Alfie","Henry","Joshua","Freddie","Archie","Ethan","Isaac","Alexander","Joseph","Edward","Samuel","Max","Sebastian","Daniel","Logan","Lucas","Mason","Dylan","Harrison","Theo","Finley","Elijah","Liam","Reuben","Caleb","Harvey","Arlo","Jude"],
+        femaleNames:["Olivia","Amelia","Isla","Ava","Emily","Isabella","Mia","Poppy","Ella","Lily","Sophia","Sophie","Grace","Freya","Evie","Scarlett","Alice","Florence","Daisy","Millie","Sienna","Ruby","Imogen","Elsie","Rosie","Lacey","Matilda","Evelyn","Aria","Eva","Charlotte","Willow","Abigail","Hannah","Phoebe","Zara","Molly","Lola","Ellie","Hollie"],
+        lastNames:["Smith","Jones","Williams","Taylor","Brown","Davies","Evans","Wilson","Thomas","Roberts","Johnson","Lewis","Walker","Robinson","Wood","Thompson","White","Watson","Jackson","Wright","Green","Harris","Cooper","King","Lee","Martin","Clarke","James","Morgan","Hughes","Edwards","Hill","Moore","Clark","Harrison","Scott","Young","Morris","Hall","Ward"],
+        phoneFormat: () => `+44 7${ri(100,999)} ${ri(100,999)} ${ri(100,999)}`
+    },
+    {
+        name:"Spain", code:"ES", dial:"+34", flag:"🇪🇸", region:"Europe",
+        maleNames:["Hugo","Mateo","Lucas","Leo","Alejandro","Daniel","Pablo","Álvaro","Adrián","David","Mario","Sergio","Carlos","Javier","Antonio","Manuel","Francisco","José","Juan","Miguel","Rafael","Fernando","Pedro","Jorge","Rubén","Diego","Iván","Óscar","Alberto","Roberto","Raúl","Gonzalo","Ignacio","Emilio","Rodrigo","Guillermo","Enrique","Salvador","Víctor","Ramón"],
+        femaleNames:["Lucía","Sofía","María","Martina","Paula","Valeria","Alba","Sara","Noa","Emma","Daniela","Claudia","Ana","Isabel","Carmen","Laura","Marta","Elena","Cristina","Raquel","Natalia","Silvia","Irene","Beatriz","Alicia","Inés","Pilar","Rosa","Teresa","Dolores","Patricia","Sonia","Verónica","Miriam","Laia","Nuria","Montserrat","Rocío","Esperanza","Concepción"],
+        lastNames:["García","Martínez","López","Sánchez","González","Pérez","Rodríguez","Fernández","Torres","Ramírez","Flores","Reyes","Cruz","Morales","Ortiz","Gómez","Muñoz","Alonso","Gutiérrez","Navarro","Ruiz","Molina","Jiménez","Delgado","Castro","Vargas","Ramos","Serrano","Blanco","Moreno","Suárez","Romero","Díaz","Herrera","Medina","Aguilar","Álvarez","Domínguez","Vega","Castillo"],
+        phoneFormat: () => `+34 6${ri(10,99)} ${ri(100,999)} ${ri(100,999)}`
+    },
+    {
+        name:"Italy", code:"IT", dial:"+39", flag:"🇮🇹", region:"Europe",
+        maleNames:["Leonardo","Francesco","Lorenzo","Alessandro","Andrea","Matteo","Gabriele","Riccardo","Tommaso","Davide","Luca","Marco","Federico","Giovanni","Antonio","Giuseppe","Salvatore","Angelo","Mario","Luigi","Vincenzo","Pietro","Stefano","Massimo","Roberto","Enrico","Paolo","Giacomo","Nicola","Emanuele","Filippo","Alberto","Simone","Cristian","Edoardo","Claudio","Giulio","Fabio","Gianluca","Daniele"],
+        femaleNames:["Sofia","Giulia","Martina","Sara","Aurora","Alice","Giorgia","Emma","Chiara","Valentina","Federica","Alessia","Elisa","Francesca","Paola","Roberta","Simona","Laura","Monica","Barbara","Silvia","Cristina","Serena","Valeria","Anna","Maria","Elena","Claudia","Sabrina","Daniela","Raffaella","Manuela","Marianna","Benedetta","Caterina","Giovanna","Lucia","Carmela","Patrizia","Loredana"],
+        lastNames:["Rossi","Russo","Ferrari","Esposito","Bianchi","Romano","Colombo","Ricci","Marino","Greco","Bruno","Gallo","Conti","De Luca","Mancini","Costa","Giordano","Rizzo","Lombardi","Moretti","Barbieri","Fontana","Santoro","Mariani","Rinaldi","Caruso","Ferrara","Gatti","Pellegrini","Palumbo","Sanna","Farina","Leone","Longo","Gentile","Martinelli","Vitale","Ferraro","Serra","De Santis"],
+        phoneFormat: () => `+39 3${ri(10,99)} ${ri(1000000,9999999)}`
+    },
+    {
+        name:"Portugal", code:"PT", dial:"+351", flag:"🇵🇹", region:"Europe",
+        maleNames:["Santiago","Rodrigo","Afonso","Tomás","Francisco","João","Miguel","Mateus","Diogo","Gonçalo","Pedro","Rafael","André","Rui","Luís","Carlos","Paulo","Nuno","Sérgio","Marco","António","Manuel","Jorge","Mário","Bruno","Hugo","Ricardo","Filipe","Alexandre","Henrique"],
+        femaleNames:["Maria","Leonor","Matilde","Beatriz","Carolina","Inês","Ana","Sofia","Mariana","Sara","Marta","Joana","Catarina","Rita","Isabel","Patrícia","Sandra","Carla","Susana","Vanessa","Andreia","Raquel","Vera","Cláudia","Filipa","Cristina","Helena","Sónia","Liliana","Daniela"],
+        lastNames:["Silva","Santos","Ferreira","Pereira","Oliveira","Costa","Rodrigues","Martins","Jesus","Sousa","Fernandes","Gonçalves","Gomes","Lopes","Marques","Alves","Almeida","Ribeiro","Pinto","Carvalho","Teixeira","Moreira","Correia","Mendes","Nunes","Soares","Vieira","Monteiro","Cardoso","Rocha"],
+        phoneFormat: () => `+351 9${ri(1,3)} ${ri(100,999)} ${ri(1000,9999)}`
+    },
+    {
+        name:"Netherlands", code:"NL", dial:"+31", flag:"🇳🇱", region:"Europe",
+        maleNames:["Liam","Noah","Lucas","Levi","Oliver","Finn","Mason","Sem","Daan","Milan","Tim","Tom","Bram","Jesse","Jayden","Lars","Sven","Thijs","Joris","Ruben","Pieter","Jan","Erik","Maarten","Jeroen","Robin","Bas","Niels","Wouter","Arjan"],
+        femaleNames:["Emma","Olivia","Ava","Lena","Sofia","Nora","Mila","Sara","Julia","Lisa","Laura","Eva","Anna","Sophie","Hannah","Femke","Roos","Iris","Fleur","Lotte","Stef","Aniek","Merel","Esther","Marloes","Janneke","Anouk","Lisette","Marleen","Chantal"],
+        lastNames:["De Jong","Jansen","De Vries","Van den Berg","Van Dijk","Bakker","Janssen","Visser","Smit","Meijer","De Boer","Mulder","De Groot","Bos","Vos","Peters","Hendriks","Van Leeuwen","Dekker","Brouwer","De Wit","Dijkstra","Smits","Thomas","Peeters","De Bruijn","Kok","Vermeulen","Van den Bosch","Postma"],
+        phoneFormat: () => `+31 6 ${ri(10000000,99999999)}`
+    },
+    {
+        name:"Sweden", code:"SE", dial:"+46", flag:"🇸🇪", region:"Europe",
+        maleNames:["Liam","Noah","Oscar","William","Elias","Hugo","Alexander","Oliver","Lucas","Axel","Filip","Viktor","Erik","Emil","Gustav","Nils","Isak","Pontus","Rasmus","Anton","Johan","Anders","Björn","Christoffer","Daniel","Henrik","Jonas","Martin","Mikael","Stefan"],
+        femaleNames:["Emma","Alva","Elsa","Alice","Maja","Wilma","Ella","Klara","Emilia","Lina","Agnes","Ida","Ebba","Moa","Elin","Saga","Nora","Astrid","Hanna","Julia","Johanna","Sara","Anna","Maria","Linda","Karin","Helena","Kristina","Susanne","Monica"],
+        lastNames:["Andersson","Johansson","Karlsson","Nilsson","Eriksson","Larsson","Olsson","Persson","Svensson","Gustafsson","Pettersson","Jonsson","Jansson","Hansson","Bengtsson","Jönsson","Lindberg","Jakobsson","Magnusson","Olofsson","Lindström","Lindqvist","Lindgren","Berg","Axelsson","Berglund","Lundberg","Lundgren","Lundqvist","Mattsson"],
+        phoneFormat: () => `+46 7${ri(0,9)}-${ri(100,999)} ${ri(10,99)} ${ri(10,99)}`
+    },
+    {
+        name:"Poland", code:"PL", dial:"+48", flag:"🇵🇱", region:"Europe",
+        maleNames:["Jakub","Jan","Szymon","Kacper","Mateusz","Piotr","Michał","Bartosz","Marcin","Tomasz","Paweł","Kamil","Marek","Maciej","Łukasz","Dariusz","Grzegorz","Krzysztof","Rafał","Damian","Adrian","Artur","Robert","Mariusz","Wojciech","Przemysław","Ireneusz","Tadeusz","Ryszard","Zbigniew"],
+        femaleNames:["Zofia","Julia","Zuzanna","Maja","Lena","Hanna","Amelia","Natalia","Aleksandra","Wiktoria","Anna","Maria","Katarzyna","Małgorzata","Agnieszka","Monika","Joanna","Magdalena","Karolina","Beata","Iwona","Dorota","Elżbieta","Renata","Barbara","Ewa","Krystyna","Bożena","Halina","Irena"],
+        lastNames:["Nowak","Kowalski","Wiśniewski","Wójcik","Kowalczyk","Kamiński","Lewandowski","Zieliński","Szymański","Woźniak","Dąbrowski","Kozłowski","Jankowski","Mazur","Wojciechowski","Kwiatkowski","Krawczyk","Kaczmarek","Piotrowski","Grabowski","Nowakowski","Pawłowski","Michalski","Adamczyk","Dudek","Zając","Wieczorek","Jabłoński","Król","Majewski"],
+        phoneFormat: () => `+48 ${ri(500,799)} ${ri(100,999)} ${ri(100,999)}`
+    },
+
+    // ── EURASIA ──
+    {
+        name:"Russia", code:"RU", dial:"+7", flag:"🇷🇺", region:"Eurasia",
+        maleNames:["Aleksandr","Dmitriy","Sergey","Andrey","Aleksey","Mikhail","Maksim","Evgeniy","Ivan","Artem","Nikita","Roman","Pavel","Daniil","Kirill","Ilya","Vladimir","Nikolay","Anton","Oleg","Vasily","Fyodor","Grigory","Boris","Konstantin","Viktor","Yuriy","Leonid","Pyotr","Stepan"],
+        femaleNames:["Anna","Maria","Elena","Olga","Tatyana","Natalya","Irina","Svetlana","Yuliya","Ekaterina","Oksana","Lyudmila","Galina","Valentina","Nadezhda","Larisa","Vera","Nina","Tamara","Yelena","Sofiya","Daria","Polina","Alina","Viktoriya","Anastasiya","Kristina","Ksenia","Mariya","Yulia"],
+        lastNames:["Ivanov","Smirnov","Kuznetsov","Popov","Vasilev","Petrov","Sokolov","Mikhailov","Novikov","Fedorov","Morozov","Volkov","Alekseev","Lebedev","Semyonov","Yegorov","Pavlov","Kozlov","Stepanov","Nikolaev","Orlov","Andreev","Makarov","Nikitin","Zakharov","Zaytsev","Solovyev","Borisov","Yakovlev","Grigoriev"],
+        phoneFormat: () => `+7 9${ri(10,99)} ${ri(100,999)}-${ri(10,99)}-${ri(10,99)}`
+    },
+    {
+        name:"Turkey", code:"TR", dial:"+90", flag:"🇹🇷", region:"Eurasia",
+        maleNames:["Yusuf","Eyüp","Ömer","Ahmet","Mehmet","Mustafa","İbrahim","Ali","Hüseyin","Hasan","Musa","Emre","Enes","Burak","Berk","Ege","Kaan","Kerem","Serkan","Mert","Oğuzhan","Erdem","Furkan","Çağrı","Berkay","Selman","İlker","Miran","Alperen","Tunahan"],
+        femaleNames:["Zeynep","Elif","Emine","Hatice","Fatma","Ayşe","Büşra","Esra","Merve","Selin","Nur","İrem","Gizem","Yasemin","Melis","Dilara","Duygu","Derya","Ceren","Ebru","Sevgi","Tuğba","Arzu","Banu","Gamze","Gül","Oya","Pınar","Aslı","Sibel"],
+        lastNames:["Yılmaz","Kaya","Demir","Çelik","Şahin","Yıldız","Yıldırım","Öztürk","Aydın","Özdemir","Arslan","Doğan","Kılıç","Aslan","Çetin","Kara","Koç","Kurt","Özkan","Şimşek","Polat","Demirci","Karahan","Güneş","Ateş","Acar","Bulut","Çakır","Duman","Erdoğan"],
+        phoneFormat: () => `+90 5${ri(30,99)} ${ri(100,999)} ${ri(10,99)} ${ri(10,99)}`
+    },
+
+    // ── AMERICAS ──
+    {
+        name:"United States", code:"US", dial:"+1", flag:"🇺🇸", region:"Americas",
+        maleNames:["James","John","Robert","Michael","William","David","Richard","Joseph","Thomas","Charles","Christopher","Daniel","Matthew","Anthony","Mark","Donald","Steven","Paul","Andrew","Joshua","Kenneth","Kevin","Brian","George","Timothy","Ronald","Edward","Jason","Jeffrey","Ryan","Jacob","Gary","Nicholas","Eric","Jonathan","Stephen","Larry","Justin","Scott","Brandon"],
+        femaleNames:["Mary","Patricia","Jennifer","Linda","Barbara","Elizabeth","Susan","Jessica","Sarah","Karen","Lisa","Nancy","Betty","Margaret","Sandra","Ashley","Dorothy","Kimberly","Emily","Donna","Michelle","Carol","Amanda","Melissa","Deborah","Stephanie","Rebecca","Sharon","Laura","Cynthia","Kathleen","Amy","Angela","Shirley","Anna","Brenda","Pamela","Emma","Nicole","Helen"],
+        lastNames:["Smith","Johnson","Williams","Brown","Jones","Garcia","Miller","Davis","Rodriguez","Martinez","Hernandez","Lopez","Gonzalez","Wilson","Anderson","Thomas","Taylor","Moore","Jackson","Martin","Lee","Perez","Thompson","White","Harris","Sanchez","Clark","Ramirez","Lewis","Robinson","Walker","Young","Allen","King","Wright","Scott","Torres","Nguyen","Hill","Flores"],
+        phoneFormat: () => `+1 (${ri(200,999)}) ${ri(200,999)}-${ri(1000,9999)}`
+    },
+    {
+        name:"Canada", code:"CA", dial:"+1", flag:"🇨🇦", region:"Americas",
+        maleNames:["Liam","Noah","William","James","Oliver","Benjamin","Elijah","Lucas","Mason","Logan","Ethan","Jackson","Sebastian","Owen","Aiden","Samuel","Joseph","John","David","Wyatt","Matthew","Luke","Asher","Carter","Julian","Grayson","Leo","Jayden","Gabriel","Isaac"],
+        femaleNames:["Olivia","Emma","Ava","Sophia","Isabella","Mia","Charlotte","Amelia","Harper","Evelyn","Abigail","Emily","Elizabeth","Mila","Ella","Avery","Sofia","Camila","Aria","Scarlett","Victoria","Madison","Luna","Grace","Chloe","Penelope","Layla","Riley","Zoey","Nora"],
+        lastNames:["Smith","Brown","Tremblay","Martin","Roy","Wilson","MacDonald","Johnson","Taylor","Anderson","Campbell","Gagnon","White","Thompson","Bouchard","Lee","Côté","Murphy","Lavoie","Fortin","Gauthier","Morin","Pelletier","Leblanc","Davis","Roberts","Harris","Young","Robinson","Walker"],
+        phoneFormat: () => `+1 (${ri(200,999)}) ${ri(200,999)}-${ri(1000,9999)}`
+    },
+    {
+        name:"Brazil", code:"BR", dial:"+55", flag:"🇧🇷", region:"Americas",
+        maleNames:["Miguel","Arthur","Heitor","Bernardo","Samuel","João","Pedro","Gabriel","Lucas","Matheus","Rafael","Felipe","Eduardo","Gustavo","André","Bruno","Carlos","Daniel","Diego","Fábio","Fernando","Henrique","Leandro","Leonardo","Marcos","Paulo","Ricardo","Rodrigo","Thiago","Vinícius"],
+        femaleNames:["Alice","Sophia","Helena","Valentina","Laura","Isabella","Manuela","Júlia","Heloísa","Luísa","Fernanda","Camila","Beatriz","Larissa","Bruna","Natália","Amanda","Mariana","Carolina","Luana","Letícia","Priscila","Renata","Vanessa","Ana","Bianca","Danielle","Elisa","Gabriela","Lívia"],
+        lastNames:["Silva","Santos","Oliveira","Souza","Rodrigues","Ferreira","Alves","Pereira","Lima","Gomes","Costa","Ribeiro","Martins","Carvalho","Almeida","Lopes","Sousa","Fernandes","Vieira","Barbosa","Rocha","Dias","Nascimento","Andrade","Moreira","Nunes","Marques","Machado","Mendes","Freitas"],
+        phoneFormat: () => { const ddd=pick([11,21,31,41,51,61,71,81,85,91]); return `+55 (${ddd}) 9${ri(1000,9999)}-${ri(1000,9999)}`; }
+    },
+    {
+        name:"Mexico", code:"MX", dial:"+52", flag:"🇲🇽", region:"Americas",
+        maleNames:["Santiago","Mateo","Sebastián","Emiliano","Alejandro","Diego","Ángel","Luis","Carlos","José","Juan","Miguel","Roberto","Eduardo","Francisco","Ricardo","Fernando","Jorge","Raúl","Mario","Javier","David","Arturo","Manuel","Adrián","Andrés","Gerardo","Héctor","Mauricio","Pablo"],
+        femaleNames:["Valentina","Regina","Sofía","Victoria","Camila","Fernanda","Jimena","Isabella","Ximena","Daniela","Mariana","Gabriela","Paola","Valeria","Andrea","Verónica","Alejandra","Claudia","Diana","Estefanía","Karla","Leticia","Lorena","Lupita","Marisol","Mónica","Nancy","Patricia","Rosa","Sandra"],
+        lastNames:["García","Martínez","López","Hernández","González","Pérez","Rodríguez","Sánchez","Ramírez","Torres","Flores","Rivera","Gómez","Díaz","Cruz","Morales","Reyes","Gutiérrez","Ortiz","Chávez","Ramos","Vargas","Castillo","Jiménez","Moreno","Álvarez","Romero","Guerrero","Mendoza","Vázquez"],
+        phoneFormat: () => `+52 1 ${ri(100,999)} ${ri(100,999)} ${ri(1000,9999)}`
+    },
+    {
+        name:"Argentina", code:"AR", dial:"+54", flag:"🇦🇷", region:"Americas",
+        maleNames:["Mateo","Santiago","Valentín","Thiago","Gael","Lautaro","Tomás","Felipe","Agustín","Sebastián","Franco","Axel","Nicolás","Lucas","Ezequiel","Federico","Facundo","Rodrigo","Martín","Gonzalo","Diego","Pablo","Ricardo","Eduardo","Alejandro","Gustavo","Hernán","Leandro","Leonardo","Marcelo"],
+        femaleNames:["Valentina","Emma","Martina","Sofía","Mia","Aitana","Zoe","Camila","Luciana","Florencia","Bianca","Victoria","Agustina","Milagros","Malena","Lucía","Sabrina","Magali","Romina","Natalia","Vanessa","Paola","Claudia","Cecilia","Lorena","Silvina","Graciela","Adriana","Verónica","Patricia"],
+        lastNames:["González","Rodríguez","Gómez","Fernández","López","Díaz","Martínez","Pérez","García","Sánchez","Romero","Sosa","Torres","Álvarez","Ruiz","Ramírez","Flores","Acosta","Medina","Herrera","Aguirre","Molina","Vargas","Castro","Ortega","Ríos","Pereyra","Gutiérrez","Benítez","Morales"],
+        phoneFormat: () => `+54 9 11 ${ri(1000,9999)}-${ri(1000,9999)}`
+    },
+
+    // ── ASIA ──
+    {
+        name:"China", code:"CN", dial:"+86", flag:"🇨🇳", region:"Asia",
+        maleNames:["Wei","Fang","Jian","Hao","Lei","Yang","Ming","Tao","Jing","Peng","Qiang","Zheng","Jun","Long","Kai","Xin","Bo","Yu","Feng","Chao","Zhi","Gang","Bin","Dong","Sheng","Jie","Liang","Xiang","Rui","Chen"],
+        femaleNames:["Fang","Li","Ming","Ying","Yan","Xia","Ling","Jing","Wei","Hui","Qing","Rong","Juan","Hua","Na","Hong","Lan","Ping","Xiu","Mei","Xue","Dan","Fen","Qian","Yun","Lin","Zhen","Cai","Shan","Ting"],
+        lastNames:["Wang","Li","Zhang","Liu","Chen","Yang","Huang","Zhao","Wu","Zhou","Xu","Sun","Ma","Zhu","Hu","Guo","He","Gao","Lin","Luo","Zheng","Liang","Xie","Tang","Han","Cao","Deng","Feng","Peng","Xiao","Cheng","Cai","Pan","Yuan","Yu","Du","Ye","Su","Jiang","Xu"],
+        phoneFormat: () => { const p=pick(["130","131","132","133","135","136","138","139","150","153","155","158","180","181","182","185","186","187","188","189"]); return `+86 ${p} ${ri(1000,9999)} ${ri(1000,9999)}`; }
+    },
+    {
+        name:"Japan", code:"JP", dial:"+81", flag:"🇯🇵", region:"Asia",
+        maleNames:["Haruto","Yuto","Sota","Yuki","Hayato","Haruki","Ryusei","Koki","Shota","Ren","Kaito","Sora","Takumi","Hinata","Ryo","Daiki","Kenta","Naoto","Yuma","Hiroshi","Kenji","Takashi","Satoshi","Makoto","Kazuki","Ryota","Shun","Tatsuya","Yuya","Akira"],
+        femaleNames:["Yui","Rin","Hina","Akari","Momoka","Aoi","Sakura","Riko","Nana","Mio","Misaki","Nanami","Ayane","Koharu","Haruka","Shiori","Yuna","Miyu","Kotone","Noa","Yoko","Kanako","Tomomi","Asuka","Hikari","Ayaka","Emi","Natsuki","Mana","Saki"],
+        lastNames:["Sato","Suzuki","Takahashi","Tanaka","Watanabe","Ito","Yamamoto","Nakamura","Kobayashi","Kato","Yoshida","Yamada","Sasaki","Yamaguchi","Matsumoto","Inoue","Kimura","Hayashi","Shimizu","Yamazaki","Mori","Abe","Ikeda","Hashimoto","Yamashita","Ishikawa","Nakajima","Maeda","Fujita","Ogawa"],
+        phoneFormat: () => `+81 9${ri(0,9)}-${ri(1000,9999)}-${ri(1000,9999)}`
+    },
+    {
+        name:"South Korea", code:"KR", dial:"+82", flag:"🇰🇷", region:"Asia",
+        maleNames:["Minjun","Seojun","Dohyun","Hajun","Jihoo","Junseo","Juwon","Siyeon","Minseong","Hyunwoo","Jungwoo","Sehun","Minho","Junho","Jinho","Hyunjo","Seunghyun","Taehyun","Jihyun","Jaemin","Wonwoo","Mingi","Yeosang","Hyunjin","Jeongin","Seungmin","Changbin","Felix","Han","Bang"],
+        femaleNames:["Jiyeon","Minju","Yuna","Seoyeon","Jisoo","Jennie","Chaeyoung","Tzuyu","Dahyun","Momo","Sana","Jihyo","Nayeon","Mina","Jeongyeon","Chaewon","Sakura","Yujin","Wonyoung","Minji","Haerin","Danielle","Hyein","Sullyoon","Jinni","Lily","Haewon","Bae","Rei","Leeseo"],
+        lastNames:["Kim","Lee","Park","Choi","Jung","Kang","Cho","Yoon","Jang","Lim","Han","Oh","Seo","Shin","Kwon","Hwang","Ahn","Song","Hong","Go","Moon","Yang","Son","Baek","Heo","Nam","Sim","No","Ha","Yoo"],
+        phoneFormat: () => `+82 10-${ri(1000,9999)}-${ri(1000,9999)}`
+    },
+    {
+        name:"India", code:"IN", dial:"+91", flag:"🇮🇳", region:"Asia",
+        maleNames:["Aarav","Vivaan","Aditya","Vihaan","Arjun","Sai","Reyansh","Ayaan","Krishna","Ishaan","Shivam","Atharv","Advik","Pranav","Advait","Dhruv","Kabir","Ritvik","Aarush","Darsh","Amit","Rahul","Raj","Vijay","Suresh","Ramesh","Mahesh","Rajesh","Dinesh","Sunil"],
+        femaleNames:["Aaradhya","Ananya","Pari","Anika","Navya","Angel","Diya","Pihu","Saanvi","Myra","Aarohi","Sara","Siya","Aditi","Priya","Divya","Pooja","Neha","Sneha","Kavya","Meera","Aishwarya","Deepika","Shreya","Riya","Ankita","Kritika","Swati","Nidhi","Shweta"],
+        lastNames:["Sharma","Verma","Gupta","Singh","Kumar","Patel","Shah","Mehta","Joshi","Nair","Iyer","Reddy","Rao","Bose","Das","Roy","Mukherjee","Chatterjee","Banerjee","Mishra","Tiwari","Pandey","Dubey","Shukla","Chaudhary","Yadav","Maurya","Chauhan","Rathore","Thakur"],
+        phoneFormat: () => { const p=pick(["70","75","76","77","78","80","82","84","85","86","87","88","90","91","93","94","95","96","97","98","99"]); return `+91 ${p}${ri(10000000,99999999)}`; }
+    },
+    {
+        name:"Indonesia", code:"ID", dial:"+62", flag:"🇮🇩", region:"Asia",
+        maleNames:["Muhammad","Ahmad","Rizky","Andi","Budi","Dimas","Fajar","Gilang","Hendra","Ilham","Joko","Kevin","Lukman","Made","Nanda","Oscar","Putra","Rafi","Surya","Teguh","Umar","Vino","Wahyu","Yoga","Zaki","Arya","Bagas","Candra","Dani","Eko"],
+        femaleNames:["Siti","Dewi","Putri","Ayu","Ratna","Indah","Lestari","Maya","Novi","Okta","Puspita","Rina","Sri","Tika","Ulfa","Vera","Winda","Yuni","Zahra","Anita","Bella","Citra","Dian","Eka","Fitri","Gita","Hana","Ika","Julita","Kartika"],
+        lastNames:["Susanto","Santoso","Wijaya","Kusuma","Pratama","Putra","Sari","Dewi","Wati","Ningrum","Setiawan","Rahmat","Hidayat","Nugroho","Prayoga","Saputra","Budiman","Hartono","Kurniawan","Wahyudi","Suryadi","Prasetyo","Wibowo","Ardianto","Febrianto","Gunawan","Hakim","Irawan","Jaya","Kristianto"],
+        phoneFormat: () => { const p=pick(["811","812","813","821","822","851","856","857","858","877","878"]); return `+62 ${p} ${ri(1000,9999)} ${ri(1000,9999)}`; }
+    },
+    {
+        name:"Pakistan", code:"PK", dial:"+92", flag:"🇵🇰", region:"Asia",
+        maleNames:["Muhammad","Ali","Ahmed","Hassan","Abdullah","Omar","Ibrahim","Bilal","Usman","Hamza","Zain","Raza","Asad","Imran","Tariq","Kamran","Faisal","Wasim","Salman","Naveed","Adnan","Sohail","Shahid","Kashif","Babar","Junaid","Waqar","Asif","Sajid","Naeem"],
+        femaleNames:["Fatima","Aisha","Zainab","Maryam","Sana","Ayesha","Rabia","Sadia","Hina","Nadia","Saima","Kiran","Uzma","Farah","Noor","Amna","Iram","Nasreen","Rubina","Shabnam","Bushra","Ghazala","Humera","Lubna","Madiha","Naila","Rehana","Shazia","Tabassum","Uzma"],
+        lastNames:["Khan","Ahmed","Ali","Hassan","Sheikh","Malik","Chaudhry","Qureshi","Siddiqui","Akhtar","Butt","Mirza","Rizvi","Hussain","Baig","Ansari","Abbasi","Rajput","Lodhi","Niazi","Khawaja","Rana","Bhatti","Chattha","Cheema","Gill","Goraya","Bajwa","Bhutta","Choudhry"],
+        phoneFormat: () => { const p=pick(["300","301","302","303","310","311","312","320","321","322","330","331","332","333","340","341","342","345"]); return `+92 ${p} ${ri(1000000,9999999)}`; }
+    },
+
+    // ── MIDDLE EAST ──
+    {
+        name:"Saudi Arabia", code:"SA", dial:"+966", flag:"🇸🇦", region:"Middle East",
+        maleNames:["Mohammed","Ahmed","Abdullah","Khalid","Ibrahim","Omar","Ali","Faisal","Fahad","Sultan","Turki","Nawaf","Nasser","Mansour","Tariq","Saud","Saad","Majed","Yousef","Bandar","Rayan","Ayman","Walid","Hasan","Husain","Ziyad","Obaid","Mishal","Aziz","Hamad"],
+        femaleNames:["Fatima","Aisha","Sara","Nora","Maha","Hessa","Lulwa","Mona","Reem","Hala","Dina","Dana","Ranya","Lina","Maya","Doha","Sumaya","Nouf","Shatha","Lama","Asma","Bothaina","Hayat","Zainab","Amal","Rand","Wafa","Hind","Ghada","Basma"],
+        lastNames:["Al-Rashid","Al-Otaibi","Al-Qahtani","Al-Ghamdi","Al-Shammari","Al-Dosari","Al-Harbi","Al-Zahrani","Al-Anazi","Al-Mutairi","Al-Subai","Al-Enezi","Al-Sayed","Al-Fahad","Al-Sultan","Al-Khalid","Al-Hamdan","Al-Osaimi","Al-Bishi","Al-Dossari","Al-Thaqafi","Al-Barrak","Al-Fayez","Al-Baqami","Al-Asiri","Al-Juaid","Al-Harthi","Al-Malki","Al-Wakeel","Al-Sawat"],
+        phoneFormat: () => `+966 5${ri(0,9)} ${ri(100,999)} ${ri(1000,9999)}`
+    },
+
+    // ── OCEANIA ──
+    {
+        name:"Australia", code:"AU", dial:"+61", flag:"🇦🇺", region:"Oceania",
+        maleNames:["Oliver","William","Jack","Noah","Thomas","Ethan","James","Lucas","Henry","Alexander","Liam","Mason","Elijah","Logan","Aiden","Caden","Jackson","Sebastian","Owen","Lachlan","Jasper","Hudson","Archer","Hamish","Flynn","Finn","Charlie","Angus","Patrick","Declan"],
+        femaleNames:["Olivia","Charlotte","Amelia","Ava","Isabella","Mia","Sophia","Isla","Zoe","Grace","Emily","Ruby","Chloe","Madison","Ella","Lily","Harper","Evie","Matilda","Ellie","Hannah","Abigail","Scarlett","Sienna","Aria","Phoebe","Lucy","Imogen","Willow","Paige"],
+        lastNames:["Smith","Jones","Williams","Brown","Wilson","Taylor","Johnson","White","Martin","Anderson","Thompson","Nguyen","Thomas","Walker","Harris","Lee","Ryan","Robinson","Kelly","King","Davis","Wright","Evans","Roberts","Young","Turner","Mitchell","Campbell","Collins","Edwards"],
+        phoneFormat: () => `+61 4${ri(10,99)} ${ri(100,999)} ${ri(100,999)}`
+    },
+
+    // ── AFRICA ──
+    {
+        name:"Nigeria", code:"NG", dial:"+234", flag:"🇳🇬", region:"Africa",
+        maleNames:["Emeka","Chidi","Babatunde","Oluwaseun","Adebayo","Kunle","Tunde","Segun","Chukwuemeka","Ike","Obinna","Chinedu","Femi","Bola","Sola","Yemi","Rotimi","Lanre","Deji","Dare","Akin","Tobi","Wale","Bayo","Kola","Biodun","Dotun","Gbenga","Ola","Niyi"],
+        femaleNames:["Ngozi","Amaka","Chidinma","Adaeze","Ifunanya","Nneka","Chiamaka","Chioma","Adaora","Kemi","Toyin","Funke","Shade","Titi","Bisi","Sade","Dupe","Yetunde","Ibidun","Titilola","Abiodun","Adeola","Folake","Omolola","Ronke","Taiwo","Kehinde","Gbemi","Bukola","Bimpe"],
+        lastNames:["Okonkwo","Adeyemi","Okafor","Babangida","Abubakar","Obi","Chukwu","Eze","Osei","Mensah","Asante","Antwi","Owusu","Adjei","Acheampong","Ampofo","Boateng","Darko","Fosu","Gyasi","Ibrahim","Musa","Aliyu","Sani","Lawal","Haruna","Usman","Bello","Garba","Yusuf"],
+        phoneFormat: () => { const p=pick(["803","806","813","816","903","906","810","811","815","819","702","708"]); return `+234 ${p} ${ri(100,999)} ${ri(1000,9999)}`; }
+    },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+function ri(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomEmail(firstName, lastName, countryCode) {
+    const global = ["gmail.com","yahoo.com","hotmail.com","outlook.com","icloud.com","protonmail.com","mail.com"];
+    const local  = {
+        FR:["orange.fr","laposte.net","free.fr","sfr.fr"],
+        DE:["web.de","gmx.de","t-online.de"],
+        RU:["mail.ru","yandex.ru","rambler.ru"],
+        CN:["qq.com","163.com","126.com","sina.com"],
+        JP:["docomo.ne.jp","softbank.ne.jp"],
+        BR:["uol.com.br","bol.com.br","terra.com.br"],
+        IN:["rediffmail.com"],
+        IT:["libero.it","virgilio.it"],
+        ES:["terra.es"],
+        PL:["wp.pl","onet.pl","interia.pl"],
+        PT:["sapo.pt"],
+        TN:["topnet.tn","hexabyte.tn"],
+        MA:["menara.ma","iam.ma"],
+        DZ:["wissal.dz"],
+        EG:["link.net"],
+    };
+    const pool = [...global, ...(local[countryCode] || [])];
+    const fn   = firstName.toLowerCase().replace(/[^a-z]/g,"");
+    const ln   = lastName.toLowerCase().replace(/[^a-z]/g,"");
+    const sep  = pick([".","-","_",""]);
+    const num  = ri(0,1) ? ri(1,999) : "";
+    const fmt  = pick([
+        `${fn}${sep}${ln}${num}`,
+        `${fn}${num}`,
+        `${ln}${sep}${fn}${num}`,
+        `${fn[0]}${sep}${ln}${num}`,
+    ]);
+    return `${fmt}@${pick(pool)}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let generatedContacts = [];
+let selectedCountries = new Set();
+
+// ═══════════════════════════════════════════════════════════════
+// FIELD RENDERERS  — how each field appears in the table cell
+// ═══════════════════════════════════════════════════════════════
+const FIELD_RENDERERS = {
+    firstName:   { th: "First Name",   td: c => c.firstName },
+    lastName:    { th: "Last Name",    td: c => c.lastName  },
+    phone:       { th: "Phone",        td: c => `<span class="phone-number">${c.phone}</span>` },
+    email:       { th: "Email",        td: c => `<span style="color:#aaa;font-size:0.82rem;">${c.email}</span>` },
+    gender:      { th: "Gender",       td: c => `<span style="color:${c.gender==='Male'?'#74b9ff':'#fd79a8'}">${c.gender==='Male'?'♂':'♀'} ${c.gender}</span>` },
+    country:     { th: "Country",      td: c => `<span class="country-badge">${c.country}</span>` },
+    flag:        { th: "Flag",         td: c => `<span style="font-size:1.3rem;">${c.flag}</span>` },
+    dialCode:    { th: "Dial",         td: c => `<span style="color:#888;font-size:0.82rem;">${c.dialCode}</span>` },
+    countryCode: { th: "Code",         td: c => `<span style="color:#666;font-size:0.82rem;">${c.countryCode}</span>` },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// BUILD FIELD TOGGLE PILLS
+// ═══════════════════════════════════════════════════════════════
+function buildFieldToggles() {
+    const container = document.getElementById("fieldToggles");
+    container.innerHTML = "";
+    FIELDS.forEach(f => {
+        const isActive = activeFields.has(f.id);
+        const pill = document.createElement("div");
+        pill.className = `toggle-pill${isActive ? " active" : ""}${f.locked ? " locked" : ""}`;
+        pill.innerHTML = `
+            <div class="checkmark">${isActive ? "✓" : ""}</div>
+            <span>${f.icon} ${f.label}</span>
+            ${f.locked ? '<span style="font-size:0.7rem;color:#888;margin-left:2px;">🔒</span>' : ""}
+        `;
+        if (!f.locked) pill.onclick = () => toggleField(f.id);
+        container.appendChild(pill);
+    });
+}
+
+function toggleField(id) {
+    const field = FIELDS.find(f => f.id === id);
+    if (!field || field.locked) return;
+    activeFields.has(id) ? activeFields.delete(id) : activeFields.add(id);
+    buildFieldToggles();
+    if (generatedContacts.length > 0) { renderTable(); renderStats(); }
+}
+
+function applyPreset(name) {
+    // Start clean — only what the preset says
+    activeFields = new Set(PRESETS[name]);
+    // Always force locked fields on top
+    FIELDS.filter(f => f.locked).forEach(f => activeFields.add(f.id));
+    buildFieldToggles();
+    if (generatedContacts.length > 0) { renderTable(); renderStats(); }
+    showToast(`Preset: ${name}`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COUNTRY CHECKBOXES
+// ═══════════════════════════════════════════════════════════════
+function renderCountries(filter = "") {
+    const container = document.getElementById("countryList");
+    container.innerHTML = "";
+    const regions = {};
+    COUNTRIES.forEach(c => {
+        if (!c.name.toLowerCase().includes(filter.toLowerCase())) return;
+        if (!regions[c.region]) regions[c.region] = [];
+        regions[c.region].push(c);
+    });
+    Object.entries(regions).forEach(([region, countries]) => {
+        const header = document.createElement("div");
+        header.className = "region-header";
+        header.textContent = `── ${region}`;
+        container.appendChild(header);
+        countries.forEach(c => {
+            const isSelected = selectedCountries.has(c.code);
+            const item = document.createElement("label");
+            item.className = `checkbox-item${isSelected ? " selected" : ""}`;
+            item.innerHTML = `
+                <input type="checkbox" value="${c.code}" ${isSelected ? "checked" : ""}
+                    onchange="toggleCountry('${c.code}', this)">
+                ${c.flag} ${c.name}
+                <span style="color:#555;font-size:0.72rem;">${c.dial}</span>
+            `;
+            container.appendChild(item);
+        });
+    });
+    updateSelectedCount();
+}
+
+function toggleCountry(code, cb) {
+    cb.checked ? selectedCountries.add(code) : selectedCountries.delete(code);
+    renderCountries(document.getElementById("countrySearch").value);
+}
+
+function selectAllCountries() {
+    COUNTRIES.forEach(c => selectedCountries.add(c.code));
+    renderCountries(document.getElementById("countrySearch").value);
+}
+
+function deselectAllCountries() {
+    selectedCountries.clear();
+    renderCountries(document.getElementById("countrySearch").value);
+}
+
+function filterCountries() {
+    renderCountries(document.getElementById("countrySearch").value);
+}
+
+function updateSelectedCount() {
+    document.getElementById("selectedCount").textContent = `${selectedCountries.size} selected`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════════════════════════
+function generateContacts() {
+    const count = parseInt(document.getElementById("contactCount").value);
+    if (!count || count < 1)          { showToast("Enter a valid number!", "error"); return; }
+    if (selectedCountries.size === 0) { showToast("Select at least one country!", "error"); return; }
+    if (count > 10000)                { showToast("Max 10 000 contacts!", "error"); return; }
+
+    document.getElementById("loading").style.display     = "block";
+    document.getElementById("resultsCard").style.display = "none";
+    document.getElementById("statsArea").style.display   = "none";
+    document.getElementById("emptyState").style.display  = "none";
+    document.getElementById("exportCard").style.display  = "none";
+
+    setTimeout(() => {
+        const pool = COUNTRIES.filter(c => selectedCountries.has(c.code));
+        generatedContacts = [];
+
+        for (let i = 0; i < count; i++) {
+            const country = pick(pool);
+            const gender  = ri(0,1) === 0 ? "Male" : "Female";
+            const fName   = gender === "Male" ? pick(country.maleNames) : pick(country.femaleNames);
+            const lName   = pick(country.lastNames);
+
+            generatedContacts.push({
+                id:          i + 1,
+                firstName:   fName,
+                lastName:    lName,
+                phone:       country.phoneFormat(),
+                email:       randomEmail(fName, lName, country.code),
+                gender:      gender,
+                country:     country.name,
+                countryCode: country.code,
+                dialCode:    country.dial,
+                flag:        country.flag,
+            });
+        }
+
+        renderTable();
+        renderStats();
+        document.getElementById("loading").style.display     = "none";
+        document.getElementById("resultsCard").style.display = "block";
+        document.getElementById("statsArea").style.display   = "flex";
+        document.getElementById("exportCard").style.display  = "block";
+        showToast(`✅ ${count} contacts generated!`);
+    }, 80);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER TABLE  — only active fields
+// ═══════════════════════════════════════════════════════════════
+function renderTable() {
+    const active = FIELDS.filter(f => activeFields.has(f.id));
+
+    document.getElementById("tableHead").innerHTML =
+        `<tr><th>#</th>${active.map(f => `<th>${FIELD_RENDERERS[f.id].th}</th>`).join("")}</tr>`;
+
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+    generatedContacts.forEach(c => {
+        const cells = active.map(f => `<td>${FIELD_RENDERERS[f.id].td(c)}</td>`).join("");
+        tbody.insertAdjacentHTML("beforeend",
+            `<tr><td style="color:#555;">${c.id}</td>${cells}</tr>`);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════════
+function renderStats() {
+    const total    = generatedContacts.length;
+    const countries= new Set(generatedContacts.map(c => c.countryCode)).size;
+    const male     = generatedContacts.filter(c => c.gender === "Male").length;
+    const female   = total - male;
+
+    document.getElementById("statTotal").textContent     = total.toLocaleString();
+    document.getElementById("statCountries").textContent = countries;
+    document.getElementById("statMale").textContent      = male.toLocaleString();
+    document.getElementById("statFemale").textContent    = female.toLocaleString();
+
+    const showGender = activeFields.has("gender");
+    document.getElementById("statMaleBox").style.display   = showGender ? "" : "none";
+    document.getElementById("statFemaleBox").style.display = showGender ? "" : "none";
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT CSV  — strictly only active fields, plain text, no HTML
+// ═══════════════════════════════════════════════════════════════
+function exportCSV() {
+    if (!generatedContacts.length) return;
+
+    const active = FIELDS.filter(f => activeFields.has(f.id));
+
+    const header = ["#", ...active.map(f => f.label)].map(h => `"${h}"`).join(",");
+
+    const rows = generatedContacts.map(c => {
+        const vals = active.map(f => {
+            // Get the raw value — no HTML
+            let val = "";
+            switch(f.id) {
+                case "firstName":   val = c.firstName;   break;
+                case "lastName":    val = c.lastName;    break;
+                case "phone":       val = c.phone;       break;
+                case "email":       val = c.email;       break;
+                case "gender":      val = c.gender;      break;
+                case "country":     val = c.country;     break;
+                case "flag":        val = c.flag;        break;
+                case "dialCode":    val = c.dialCode;    break;
+                case "countryCode": val = c.countryCode; break;
+            }
+            return `"${String(val).replace(/"/g,'""')}"`;
+        });
+        return [`"${c.id}"`, ...vals].join(",");
+    });
+
+    downloadFile([header, ...rows].join("\n"), `contacts_${Date.now()}.csv`, "text/csv;charset=utf-8;");
+    showToast("📄 CSV downloaded!");
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT VCF  — respects active fields
+// ═══════════════════════════════════════════════════════════════
+function exportVCF() {
+    if (!generatedContacts.length) return;
+
+    const showFirst   = activeFields.has("firstName");
+    const showLast    = activeFields.has("lastName");
+    const showEmail   = activeFields.has("email");
+    const showCountry = activeFields.has("country");
+    const showGender  = activeFields.has("gender");
+
+    const vcf = generatedContacts.map(c => {
+        const fn = [showFirst ? c.firstName : "", showLast ? c.lastName : ""].filter(Boolean).join(" ");
+        const n  = `${showLast ? c.lastName : ""};${showFirst ? c.firstName : ""};;;`;
+        const lines = [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            `FN:${fn}`,
+            `N:${n}`,
+            `TEL;TYPE=CELL:${c.phone.replace(/\s/g,"")}`,
+        ];
+        if (showEmail)   lines.push(`EMAIL:${c.email}`);
+        if (showCountry) lines.push(`ADR;TYPE=HOME:;;;;;;${c.country}`);
+        if (showGender)  lines.push(`NOTE:${c.gender}`);
+        lines.push("END:VCARD");
+        return lines.join("\r\n");
+    }).join("\r\n");
+
+    downloadFile(vcf, `contacts_${Date.now()}.vcf`, "text/vcard;charset=utf-8;");
+    showToast("📱 VCF downloaded!");
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DOWNLOAD FILE
+// ═══════════════════════════════════════════════════════════════
+function downloadFile(content, filename, mime) {
+    const blob = new Blob(["\uFEFF" + content], { type: mime });
+    const url  = URL.createObjectURL(blob);
+    const a    = Object.assign(document.createElement("a"), { href: url, download: filename });
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLEAR
+// ═══════════════════════════════════════════════════════════════
+function clearContacts() {
+    generatedContacts = [];
+    document.getElementById("tableBody").innerHTML    = "";
+    document.getElementById("resultsCard").style.display = "none";
+    document.getElementById("statsArea").style.display   = "none";
+    document.getElementById("exportCard").style.display  = "none";
+    document.getElementById("emptyState").style.display  = "block";
+    showToast("🗑️ Cleared!");
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function showToast(msg, type = "success") {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.background = type === "error" ? "#e74c3c" : "#2ecc71";
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+buildFieldToggles();
+renderCountries();
+
+</script>
+</body>
+</html>
